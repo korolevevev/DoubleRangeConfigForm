@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+            name="description"
+            content="A test task on creating a form"
+    />
+    <link rel="stylesheet" href="styles.css">
+    <title>ГЛОБАЛ СМАРТ МАРКЕТ - задание 2</title>
+</head>
+<body>
+<form action="" id="config-form">
+    <p>Значения при инициализации</p>
+    <div class="config-inputs">
+        <div>
+            <label>
+                Значение 1: <br> <input type="number" placeholder="1000" id="init-val1">
+            </label>
+        </div>
+        <div>
+            <label>
+                Значение 2: <br> <input type="number" placeholder="10000" id="init-val2">
+            </label>
+        </div>
+    </div>
+    <div class="config-submit">
+        <input type="submit" value="Изменить форму" onsubmit="handleConfigFormSubmit()">
+    </div>
+</form>
+<form action="" id="double-range-form" method="POST">
+    <div class="wrapper">
+        <div class="inputs">
+            <input type="number" min="1000" max="10000" value="2502" id="input-1" oninput="inputChange()">
+            <input type="number" min="1000" max="10000" value="6600" id="input-2" oninput="inputChange()">
+        </div>
+        <div class="sliders">
+            <div class="slider-track"></div>
+            <input type="range" min="1000" max="10000" value="1000" id="slider-1" oninput="sliderChange()">
+            <input type="range" min="1000" max="10000" value="10000" id="slider-2" oninput="sliderChange()">
+        </div>
+        <div class="buttons">
+            <input type="submit" class="submit-button">
+        </div>
+    </div>
+</form>
+
+<script>
+    window.onload = function(){
+        sliderOne.value = inputOne.value
+        sliderTwo.value = inputTwo.value
+        fillColor();
+    }
+
+    let configForm = document.getElementById("config-form")
+    let configOne = document.getElementById("init-val1");
+    let configTwo = document.getElementById("init-val2");
+
+    let myForm = document.getElementById("double-range-form")
+    let sliderOne = document.getElementById("slider-1");
+    let sliderTwo = document.getElementById("slider-2");
+    let inputOne = document.getElementById("input-1");
+    let inputTwo = document.getElementById("input-2");
+    let minGap = 0;
+    let sliderTrack = document.querySelector(".slider-track");
+    let sliderMaxValue = document.getElementById("slider-1").max;
+
+    const handleConfigFormSubmit = (event) => {
+        event.preventDefault()
+        if(parseInt(configTwo.value) - parseInt(configOne.value) >= 1
+            && parseInt(configOne.value) >= 1000
+            && parseInt(configTwo.value) <= 10000) {
+            inputOne.value = configOne.value
+            inputTwo.value = configTwo.value
+        }
+        inputChange()
+    }
+
+    configForm.addEventListener('submit', handleConfigFormSubmit)
+
+    const sliderChange = () => {
+        if (parseInt(inputTwo.value) - parseInt(inputOne.value) <= minGap) {
+            sliderOne.value = parseInt(inputTwo.value) - minGap;
+            sliderTwo.value = parseInt(inputOne.value) + minGap;
+        }
+        inputOne.value = sliderOne.value
+        inputTwo.value = sliderTwo.value
+        fillColor();
+    }
+
+    const inputChange = () => {
+        if (parseInt(inputTwo.value) - parseInt(inputOne.value) >= minGap) {
+            sliderOne.value = inputOne.value
+            sliderTwo.value = inputTwo.value
+        }
+        fillColor();
+    }
+
+    const fillColor = () => {
+        let percent1 = (sliderOne.value / sliderMaxValue) * 100 - 5;
+        let percent2 = (sliderTwo.value / sliderMaxValue) * 100 - 5;
+        sliderTrack.style.background = `linear-gradient(to right, #9a9a9a ${percent1}% , #1e9cb1 ${percent1}% , #1e9cb1 ${percent2}%, #9a9a9a ${percent2}%)`;
+    }
+
+    const handleFormSubmit = async (event) => {
+        event.preventDefault()
+        const data = serializeForm()
+        const response = await sendData(data)
+        console.log('Данные формы:', data)
+        console.log(response)
+        alert(`Форма успешно отправлена на сервер по API с помощью асинхронной функции sendData (fetch)!
+
+Данные формы: ${data.min}-${data.max}, данные в виде объекта выведены в консоль`)
+    }
+
+    myForm.addEventListener('submit', handleFormSubmit)
+
+    const serializeForm = () => {
+        return({min: inputOne.value, max: inputTwo.value})
+    }
+
+    // функция отправки данных на сервер
+    async function sendData(data) {
+        return await fetch('/api/apply/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'multipart/form-data' },
+            body: data,
+        })
+    }
+
+</script>
+</body>
+</html>

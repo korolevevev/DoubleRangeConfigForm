@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ГЛОБАЛ СМАРТ МАРКЕТ - задание 2</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrapper">
+    <div>
+            <span id="range1">
+                1000
+            </span>
+        <span> &dash; </span>
+        <span id="range2">
+                10000
+            </span>
+    </div>
+    <div>
+        <form>
+            <input type="number" min="1000" max="10000" value="1000" id="input-1">
+            <input type="number" min="1000" max="10000" value="10000" id="input-2">
+        </form>
+    </div>
+    <div class="container">
+        <div class="slider-track"></div>
+        <input type="range" min="1000" max="10000" value="2502" id="slider-1" oninput="slideOne()">
+        <input type="range" min="1000" max="10000" value="6600" id="slider-2" oninput="slideTwo()">
+    </div>
+</div>
+
+<script>
+    window.onload = function(){
+        slideOne();
+        slideTwo();
+        showInputOne();
+        showInputTwo();
+    }
+
+    let sliderOne = document.getElementById("slider-1");
+    let sliderTwo = document.getElementById("slider-2");
+    let inputOne = document.getElementById("input-1");
+    let inputTwo = document.getElementById("input-2");
+    let displayValOne = document.getElementById("range1");
+    let displayValTwo = document.getElementById("range2");
+    let minGap = 0;
+    let sliderTrack = document.querySelector(".slider-track");
+    let sliderMaxValue = document.getElementById("slider-1").max;
+
+    const slideOne = () => {
+        if(parseInt(sliderTwo.value) - parseInt(sliderOne.value) <= minGap){
+            sliderOne.value = parseInt(sliderTwo.value) - minGap;
+        }
+        displayValOne.textContent = sliderOne.value;
+        fillColor();
+    }
+    const slideTwo = () => {
+        if(parseInt(sliderTwo.value) - parseInt(sliderOne.value) <= minGap){
+            sliderTwo.value = parseInt(sliderOne.value) + minGap;
+        }
+        displayValTwo.textContent = sliderTwo.value;
+        fillColor();
+    }
+    const showInputOne = () => {
+        inputOne.value = parseInt(sliderOne.value);
+    }
+    const showInputTwo = () => {
+        inputTwo.value = parseInt(sliderTwo.value);
+    }
+    const fillColor = () => {
+        let percent1 = (sliderOne.value / sliderMaxValue) * 100 - 5;
+        let percent2 = (sliderTwo.value / sliderMaxValue) * 100 - 5;
+        sliderTrack.style.background = `linear-gradient(to right, #9a9a9a ${percent1}% , #1e9cb1 ${percent1}% , #1e9cb1 ${percent2}%, #9a9a9a ${percent2}%)`;
+    }
+</script>
+</body>
+</html>
